@@ -3,6 +3,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import Item, OrderItem, Order
 from .serializers import ItemSerializer, CartItemSerializer, OrderSerializer
 from rest_framework.views import APIView
+
 from rest_framework.response import Response
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -42,9 +43,9 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
-    def create(self, request):
-        data = request.data
-        items = data.get("items",[])
+    def create(self, serializer):
+        data = self.request.data
+        items = data['items']
         total_amount = 0
         if items:
             for x in items:
@@ -63,6 +64,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
     def update(self, request, *args, **kwargs):
+        import pdb;pdb.set_trace()
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
@@ -81,12 +83,19 @@ class OrderViewSet(viewsets.ModelViewSet):
         self.perform_update(serializer)
 
         return Response(serializer.data)
-    
+
 
 class PaidOrdersAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, user_id):
-        paid_orders = Order.objects.filter(user_id=user_id, is_paid=True)
+    def get(self, request, ):
+        paid_orders = Order.objects.filter(user=request.user, is_paid=True)
         serializer = OrderSerializer(paid_orders, many=True)
+        return Response(serializer.data)
+class MyKartAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        unpaid_orders = Order.objects.filter(user=request.user, is_paid=False)
+        serializer = OrderSerializer(unpaid_orders, many=True)
         return Response(serializer.data)

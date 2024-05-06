@@ -18,6 +18,7 @@ class Order(models.Model):
     is_paid = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=_status, default='Pending')
 
+
 class OrderItem(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
