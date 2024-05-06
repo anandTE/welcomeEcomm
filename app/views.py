@@ -64,7 +64,6 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
     def update(self, request, *args, **kwargs):
-        import pdb;pdb.set_trace()
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
@@ -88,8 +87,8 @@ class OrderViewSet(viewsets.ModelViewSet):
 class PaidOrdersAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, ):
-        paid_orders = Order.objects.filter(user=request.user, is_paid=True)
+    def get(self, request, order_id):
+        paid_orders = Order.objects.filter(id=order_id, is_paid=True)
         serializer = OrderSerializer(paid_orders, many=True)
         return Response(serializer.data)
 class MyKartAPIView(APIView):

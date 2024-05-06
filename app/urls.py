@@ -13,6 +13,6 @@ router.register(r'orders', OrderViewSet, basename='orders')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('order-detail/<int:user_id>/', PaidOrdersAPIView.as_view(), name='paid-orders'),
+    path('order-detail/<int:order_id>/', PaidOrdersAPIView.as_view(), name='paid-orders'),
     path('my-kart/', MyKartAPIView.as_view(), name='paid-orders'),
 ]
